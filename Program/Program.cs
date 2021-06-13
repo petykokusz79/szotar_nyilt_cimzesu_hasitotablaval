@@ -8,8 +8,8 @@ namespace Program {
     class Program {
         class Szótár<K, T> {
             class KulcsÉrték {
-                public K kulcs = default(K); // $
-                public T tartalom = default(T); // $
+                public K kulcs = default(K);
+                public T tartalom = default(T);
                 public bool üres = true;
                 public bool törölve = false;
             }
@@ -25,7 +25,7 @@ namespace Program {
                 this.méret = méret;
                 this.hasítófüggvény = hasítófüggvény;
                 this.tábla = new KulcsÉrték[méret];
-                for (int i = 0; i < méret; i++) { // $
+                for (int i = 0; i < méret; i++) {
                     tábla[i] = new KulcsÉrték();
                 }
             }
@@ -37,14 +37,14 @@ namespace Program {
             public T this[K k] {
                 get {
                     int index = Helye(k);
-                    if (this.tábla[index].üres || !this.tábla[index].kulcs.Equals(k)) {
+                    if (this.tábla[index].üres || !k.Equals(this.tábla[index].kulcs)) {
                         throw new Exception("Nincs ilyen kulcs!");
                     }
                     return this.tábla[index].tartalom;
                 }
                 set {
                     int index = Helye(k);
-                    if (this.tábla[index].kulcs.Equals(k)) {
+                    if (k.Equals(this.tábla[index].kulcs)) {
                         this.tábla[index].tartalom = value;
                     }
                     else if (this.count == this.méret) {
@@ -62,26 +62,26 @@ namespace Program {
 
             private int Helye(K k) {
                 int kezdet = hasítófüggvény(k);
-                if (this.tábla[kezdet].kulcs.Equals(k)) {
+                if (k.Equals(this.tábla[kezdet].kulcs)) {
                     return kezdet;
                 }
                 int hely = kezdet;
                 for (int cím = kezdet + 1; cím != kezdet; cím = (cím + 1) % méret) {
-                    if (this.tábla[cím].üres) {
+                    if (this.tábla[cím].üres && !this.tábla[hely].üres) {
                         hely = cím;
                     }
-                    if (this.tábla[cím].kulcs.Equals(k)) {
+                    if (k.Equals(this.tábla[cím].kulcs)) {
                         return cím;
                     }
                 }
                 return hely;
             }
 
-            public bool ContainsKey(K k) => tábla[Helye(k)].kulcs.Equals(k);
+            public bool ContainsKey(K k) => k.Equals(tábla[Helye(k)].kulcs);
 
             public bool FindValue(T t, out K k) {
                 foreach (KulcsÉrték elem in this.tábla) {
-                    if (elem.tartalom.Equals(t)) {
+                    if (t.Equals(elem.tartalom)) {
                         k = elem.kulcs;
                         return true;
                     }
@@ -92,10 +92,11 @@ namespace Program {
 
             public void Remove(K k) {
                 int index = Helye(k);
-                if (!this.tábla[index].kulcs.Equals(k)) {
+                if (!k.Equals(this.tábla[index].kulcs)) {
                     throw new Exception("Nincs ilyen kulcs!");
                 }
                 this.tábla[index] = new KulcsÉrték();
+                this.tábla[index].törölve = true;
                 --this.count;
             }
 
